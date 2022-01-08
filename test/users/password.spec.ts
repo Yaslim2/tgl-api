@@ -57,7 +57,7 @@ test.group('Password', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 404)
-    assert.equal(body.message, 'user not found')
+    assert.equal(body.message, 'User not found')
   })
 
   test('it should be able to reset the password', async (assert) => {
@@ -90,7 +90,7 @@ test.group('Password', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 404)
-    assert.equal(body.message, 'invalid token')
+    assert.equal(body.message, 'Invalid token')
   })
 
   test('it should return 404 when trying to use the same token twice', async (assert) => {
@@ -106,7 +106,7 @@ test.group('Password', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 404)
-    assert.equal(body.message, 'invalid token')
+    assert.equal(body.message, 'Invalid token')
   })
 
   test('it cannot reset the password with a token who is expired after 2 hours', async (assert) => {
@@ -122,7 +122,7 @@ test.group('Password', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 410)
-    assert.equal(body.message, 'token expired')
+    assert.equal(body.message, 'Token expired')
   })
 
   group.beforeEach(async () => {

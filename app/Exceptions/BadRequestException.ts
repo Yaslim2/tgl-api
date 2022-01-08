@@ -1,4 +1,5 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { string } from '@ioc:Adonis/Core/Helpers'
 import { Exception } from '@adonisjs/core/build/standalone'
 
 /*
@@ -20,7 +21,7 @@ export default class BadRequestException extends Exception {
     return ctx.response.status(error.status).send({
       code: error.code,
       status: error.status,
-      message: error.message,
+      message: string.sentenceCase(error.message),
     })
   }
 }

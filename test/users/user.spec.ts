@@ -70,7 +70,7 @@ test.group('User', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 409)
-    assert.equal(body.message, 'email already in use')
+    assert.equal(body.message, 'Email already in use')
   })
 
   test('it should return 409 when trying to create an user with an existing username', async (assert) => {
@@ -87,7 +87,7 @@ test.group('User', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 409)
-    assert.equal(body.message, 'username already in use')
+    assert.equal(body.message, 'Username already in use')
   })
 
   test('it should update an user', async (assert) => {
@@ -122,7 +122,7 @@ test.group('User', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 404)
-    assert.equal(body.message, 'user not found')
+    assert.equal(body.message, 'User not found')
   })
 
   test('it should get an user by id', async (assert) => {
@@ -167,7 +167,7 @@ test.group('User', (group) => {
     assert.isEmpty(users, 'Users not empty')
   })
 
-  test('it should return 403 if you are trying to get all users and you are not an admin', async (assert) => {
+  test.only('it should return 403 if you are trying to get all users and you are not an admin', async (assert) => {
     const { body } = await supertest(BASE_URL)
       .get(`/users`)
       .set('Authorization', `Bearer ${token}`)

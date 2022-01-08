@@ -46,7 +46,7 @@ test.group('Session', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 400)
-    assert.equal(body.message, 'invalid credentials')
+    assert.equal(body.message, 'Invalid credentials')
   })
 
   test('it should return 400 when email are invalid', async (assert) => {
@@ -60,7 +60,7 @@ test.group('Session', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 400)
-    assert.equal(body.message, 'invalid credentials')
+    assert.equal(body.message, 'Invalid credentials')
   })
 
   test('it should return 204 when user logout', async () => {
