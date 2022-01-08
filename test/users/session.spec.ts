@@ -33,7 +33,6 @@ test.group('Session', (group) => {
 
   test('it should return 422 when credentials are not provided', async (assert) => {
     const { body } = await supertest(BASE_URL).post('/sessions').send({}).expect(422)
-    console.log(body)
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 422)
   })

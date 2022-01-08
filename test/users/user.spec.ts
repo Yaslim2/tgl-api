@@ -157,7 +157,7 @@ test.group('User', (group) => {
     assert.equal(body.users[1].id, newUser.id)
   })
 
-  test.only('it should delete an user', async (assert) => {
+  test('it should delete an user', async (assert) => {
     await supertest(BASE_URL)
       .delete(`/users/${user.id}`)
       .set('Authorization', `Bearer ${token}`)
