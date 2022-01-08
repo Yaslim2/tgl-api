@@ -57,7 +57,7 @@ test.group('Password', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 404)
-    assert.equal(body.message, 'no user found with this email')
+    assert.equal(body.message, 'user not found')
   })
 
   test('it should be able to reset the password', async (assert) => {

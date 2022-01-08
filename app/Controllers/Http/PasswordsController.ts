@@ -10,8 +10,7 @@ import ResetPassword from 'App/Validators/ResetPasswordValidator'
 export default class PasswordsController {
   public async forgotPassword({ request, response }: HttpContextContract) {
     const { email, resetPasswordUrl } = await request.validate(ForgotPassword)
-    const user = await User.findBy('email', email)
-    if (!user) throw new BadRequest('no user found with this email', 404)
+    const user = await this.findUserByEmail(email)
 
     const random = await promisify(randomBytes)(24)
     const token = random.toString('hex')
@@ -54,5 +53,10 @@ export default class PasswordsController {
     await userByToken.tokens[0].delete()
     await userByToken.save()
     return response.noContent()
+  }
+  private async findUserByEmail(email: string) {
+    const user = await User.findBy('email', email)
+    if (!user) throw new BadRequest('user not found', 404)
+    return user
   }
 }
