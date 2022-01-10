@@ -7,6 +7,7 @@ import supertest from 'supertest'
 const BASE_URL = `http://${process.env.HOST}:${process.env.PORT}`
 let user = {} as User
 let token = ''
+
 test.group('User', (group) => {
   test('it should create an user', async (assert) => {
     const userPayload = {
@@ -97,7 +98,7 @@ test.group('User', (group) => {
       password: 'teste123',
     }
     const { body } = await supertest(BASE_URL)
-      .put(`/users/${user.id}`)
+      .put(`/users`)
       .set('Authorization', `Bearer ${token}`)
       .send(userPayload)
       .expect(200)
@@ -108,6 +109,111 @@ test.group('User', (group) => {
     assert.equal(body.user.id, user.id)
   })
 
+  test('it should update an user', async (assert) => {
+    const userPayload = {
+      email: 'teste@teste.com',
+      username: 'teste',
+      password: 'teste123',
+    }
+    const { body } = await supertest(BASE_URL)
+      .put(`/users`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(userPayload)
+      .expect(200)
+
+    assert.exists(body.user, 'User undefined')
+    assert.equal(body.user.email, userPayload.email)
+    assert.equal(body.user.username, userPayload.username)
+    assert.equal(body.user.id, user.id)
+  })
+
+  test('it should return 409 when trying to update to an existing email', async (assert) => {
+    const userPayload = {
+      email: 'teste@teste.com',
+      username: 'teste',
+      password: 'teste123',
+    }
+
+    await UserFactory.merge({
+      email: userPayload.email,
+    }).create()
+
+    const { body } = await supertest(BASE_URL)
+      .put(`/users`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(userPayload)
+      .expect(409)
+
+    assert.equal(body.code, 'BAD_REQUEST')
+    assert.equal(body.status, 409)
+  })
+
+  test('it should return 409 when trying to update to an existing username', async (assert) => {
+    const userPayload = {
+      email: 'teste@teste.com',
+      username: 'teste',
+      password: 'teste123',
+    }
+
+    await UserFactory.merge({
+      username: userPayload.username,
+    }).create()
+
+    const { body } = await supertest(BASE_URL)
+      .put(`/users`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(userPayload)
+      .expect(409)
+
+    assert.equal(body.code, 'BAD_REQUEST')
+    assert.equal(body.status, 409)
+  })
+
+  test('it should be able to update the user to the same credentials', async (assert) => {
+    const { body } = await supertest(BASE_URL)
+      .put(`/users`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ username: user.username, email: user.email, password: '125478' })
+      .expect(200)
+
+    assert.exists(body.user, 'User undefined')
+    assert.equal(body.user.id, user.id)
+  })
+
+  test('it should return 422 when not providing required data to update the user', async (assert) => {
+    const { body } = await supertest(BASE_URL)
+      .put(`/users`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({})
+      .expect(422)
+
+    assert.equal(body.code, 'BAD_REQUEST')
+    assert.equal(body.status, 422)
+  })
+
+  test('it should return 422 when providing an invalid email to update the user', async (assert) => {
+    const { body } = await supertest(BASE_URL)
+      .put(`/users`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ username: user.username, email: 'yaslim', password: '125478' })
+      .expect(422)
+
+    assert.equal(body.code, 'BAD_REQUEST')
+    assert.equal(body.status, 422)
+  })
+
+  test('it should return 422 when providing an invalid password to update the user', async (assert) => {
+    const { body } = await supertest(BASE_URL)
+      .put(`/users`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ username: user.username, email: user.email, password: '125' })
+      .expect(422)
+
+    assert.equal(body.code, 'BAD_REQUEST')
+    assert.equal(body.status, 422)
+  })
+
+  /*
   test('it should return 404 when providing an invalid id', async (assert) => {
     const userPayload = {
       email: 'teste@teste.com',
@@ -115,7 +221,7 @@ test.group('User', (group) => {
       password: 'teste123',
     }
     const { body } = await supertest(BASE_URL)
-      .put(`/users/123`)
+      .put(`/users`)
       .set('Authorization', `Bearer ${token}`)
       .send(userPayload)
       .expect(404)
@@ -123,11 +229,11 @@ test.group('User', (group) => {
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 404)
     assert.equal(body.message, 'User not found')
-  })
+  })*/
 
-  test('it should get an user by id', async (assert) => {
+  test('it should get an user', async (assert) => {
     const { body } = await supertest(BASE_URL)
-      .get(`/users/${user.id}`)
+      .get(`/users`)
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
 
@@ -135,10 +241,18 @@ test.group('User', (group) => {
     assert.equal(body.user.id, user.id)
   })
 
+  test('it should delete an user', async (assert) => {
+    await supertest(BASE_URL).delete(`/users`).set('Authorization', `Bearer ${token}`).expect(204)
+
+    const users = await Database.query().select('*').from('users')
+    assert.isEmpty(users, 'Users not empty')
+  })
+
+  /*
   test('it should get all users (if you are admin)', async (assert) => {
     const password = '123456'
     const email = 'yaslim@luby.com'
-    const newUser = await UserFactory.merge({ password, email, isAdmin: 1 }).create()
+    const newUser = await UserFactory.merge({ password, email, isAdmin: true }).create()
 
     const response = await supertest(BASE_URL)
       .post('/sessions')
@@ -155,19 +269,9 @@ test.group('User', (group) => {
     assert.equal(body.users.length, 2)
     assert.equal(body.users[0].id, user.id)
     assert.equal(body.users[1].id, newUser.id)
-  })
+  })*/
 
-  test('it should delete an user', async (assert) => {
-    await supertest(BASE_URL)
-      .delete(`/users/${user.id}`)
-      .set('Authorization', `Bearer ${token}`)
-      .expect(204)
-
-    const users = await Database.query().select('*').from('users')
-    assert.isEmpty(users, 'Users not empty')
-  })
-
-  test.only('it should return 403 if you are trying to get all users and you are not an admin', async (assert) => {
+  /*test('it should return 403 if you are trying to get all users and you are not an admin', async (assert) => {
     const { body } = await supertest(BASE_URL)
       .get(`/users`)
       .set('Authorization', `Bearer ${token}`)
@@ -175,7 +279,7 @@ test.group('User', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 403)
-  })
+  })*/
 
   group.before(async () => {
     const password = '123456'

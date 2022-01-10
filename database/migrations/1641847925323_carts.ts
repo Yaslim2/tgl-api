@@ -1,15 +1,12 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
-export default class Users extends BaseSchema {
-  protected tableName = 'users'
+export default class Carts extends BaseSchema {
+  protected tableName = 'carts'
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.string('username').unique().notNullable()
-      table.string('email').unique().notNullable()
-      table.string('password').notNullable()
-      table.boolean('is_admin').unsigned().notNullable().defaultTo(false)
+      table.float('min_value').unsigned().notNullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

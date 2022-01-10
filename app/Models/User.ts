@@ -13,8 +13,8 @@ export default class User extends BaseModel {
   @column()
   public email: string
 
-  @column({ serializeAs: null })
-  public isAdmin: number
+  @column()
+  public isAdmin: boolean
 
   @hasMany(() => LinkToken, { foreignKey: 'userId' })
   public tokens: HasMany<typeof LinkToken>
