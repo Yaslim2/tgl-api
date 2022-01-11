@@ -3,17 +3,40 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import BadRequest from 'App/Exceptions/BadRequestException'
 import CreateCart from 'App/Validators/CreateCartValidator'
 import UpdateCart from 'App/Validators/UpdateCartValidator'
+import Game from 'App/Models/Game'
 
 export default class CartsController {
   public async index({ response, request }: HttpContextContract) {
-    const { id } = request.qs()
-    const rules = await this.findAndFormatCartRules(+id)
+    const id = request.param('id')
+    const rules = await this.findAndFormatCartRules(id)
     return response.ok({ rules })
   }
 
   public async indexAll({ response }: HttpContextContract) {
     const carts = await this.findAndFormatAllCartRules()
     return response.ok({ carts })
+  }
+
+  public async addGame({ request, response }: HttpContextContract) {
+    const cartId = request.param('cartId')
+    const gameId = request.param('gameId')
+
+    const cart = await this.findCart(cartId)
+    const game = await this.findGame(gameId)
+
+    await cart.load('types')
+    const existingGame = cart.types.find((cartGame) => cartGame.id === game.id)
+    if (existingGame)
+      throw new BadRequest('the game you tried to add already exists in the cart.', 409)
+
+    game.cartId = cartId
+
+    await game.save()
+    await game.refresh()
+    await cart.refresh()
+
+    const formatedCart = await this.findAndFormatCartRules(cartId)
+    return response.created({ cart: formatedCart })
   }
 
   public async store({ response, request }: HttpContextContract) {
@@ -49,6 +72,13 @@ export default class CartsController {
     if (!cart)
       throw new BadRequest('cart not found. please insert a valid cart id and try again', 404)
     return cart
+  }
+
+  private async findGame(id: number) {
+    const game = await Game.find(id)
+    if (!game)
+      throw new BadRequest('game not found. please insert a valid game id and try again', 404)
+    return game
   }
 
   private async findAndFormatCartRules(id: number) {

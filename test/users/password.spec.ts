@@ -81,17 +81,17 @@ test.group('Password', (group) => {
     assert.equal(body.status, 422)
   })
 
-  test('it should return 422 when providing an token that not exists', async (assert) => {
+  test('it should return 404 when providing an token that not exists', async (assert) => {
     const { body } = await supertest(BASE_URL)
       .post('/reset-password')
       .send({ token: '587', password: '145874' })
-      .expect(422)
+      .expect(404)
 
     assert.equal(body.code, 'BAD_REQUEST')
-    assert.equal(body.status, 422)
+    assert.equal(body.status, 404)
   })
 
-  test('it should return 422 when trying to use the same token twice', async (assert) => {
+  test('it should return 404 when trying to use the same token twice', async (assert) => {
     const password = '12345678'
     const user = await UserFactory.create()
     const { token } = await user.related('tokens').create({ token: 'token' })
@@ -100,10 +100,10 @@ test.group('Password', (group) => {
     const { body } = await supertest(BASE_URL)
       .post('/reset-password')
       .send({ token, password })
-      .expect(422)
+      .expect(404)
 
     assert.equal(body.code, 'BAD_REQUEST')
-    assert.equal(body.status, 422)
+    assert.equal(body.status, 404)
   })
 
   test('it cannot reset the password with a token who is expired after 2 hours', async (assert) => {

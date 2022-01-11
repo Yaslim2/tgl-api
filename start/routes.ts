@@ -11,16 +11,19 @@ Route.post('/reset-password', 'PasswordsController.resetPassword')
 Route.post('/sessions', 'SessionsController.store')
 Route.delete('/sessions', 'SessionsController.destroy').middleware('auth')
 
-Route.get('/games', 'CartsController.index')
-
 Route.group(() => {
-  Route.post('/cart', 'CartsController.store')
-  Route.put('/cart/:id', 'CartsController.update')
-  Route.delete('/cart/:id', 'CartsController.destroy')
-  Route.get('/cart/all', 'CartsController.indexAll')
+  Route.get('/carts/:id', 'CartsController.index')
+  Route.group(() => {
+    Route.post('/carts', 'CartsController.store')
+    Route.put('/carts/:id', 'CartsController.update')
+    Route.delete('/carts/:id', 'CartsController.destroy')
+    Route.get('/carts/all', 'CartsController.indexAll')
+    Route.post('/carts/:cartId/games/:gameId', 'CartsController.addGame')
+  })
+    .prefix('/admin')
+    .middleware('auth')
+    .middleware('adminVerifier')
 })
-  .middleware('auth')
-  .middleware('adminVerifier')
 
 Route.group(() => {
   Route.post('/games', 'GamesController.store')

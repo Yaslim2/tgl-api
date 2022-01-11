@@ -44,7 +44,7 @@ export default class PasswordsController {
       .preload('tokens')
       .first()
 
-    if (!userByToken) throw new BadRequest('the token that you tried to use are invalid.', 422)
+    if (!userByToken) throw new BadRequest('the token that you tried to use are invalid.', 404)
 
     const tokenAge = Math.abs(userByToken.tokens[0].createdAt.diffNow('hours').hours)
     if (tokenAge > 2)

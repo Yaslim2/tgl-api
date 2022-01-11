@@ -3,7 +3,7 @@ import { BaseModel, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import Game from 'App/Models/Game'
 
 export default class Cart extends BaseModel {
-  @column({ isPrimary: true, serializeAs: null })
+  @column({ isPrimary: true })
   public id: number
 
   @column({ serializeAs: 'minValue' })

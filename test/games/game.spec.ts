@@ -7,10 +7,10 @@ import Game from 'App/Models/Game'
 const BASE_URL = `http://${process.env.HOST}:${process.env.PORT}`
 
 let token: string
-
+const cartId = 1
 test.group('Game', (group) => {
-  test('it should get all games avaiables on the cart', async (assert) => {
-    const { body } = await supertest(BASE_URL).get('/games').expect(200)
+  test('it should get all games avaiables on the cart (default 1)', async (assert) => {
+    const { body } = await supertest(BASE_URL).get(`/carts/${cartId}`).expect(200)
     assert.exists(body.rules, 'Games undefined')
     assert.equal(body.rules.minValue, 30)
     assert.equal(body.rules.types.length, 3)
