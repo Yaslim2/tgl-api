@@ -13,6 +13,7 @@ export default class Games extends BaseSchema {
         .inTable('carts')
         .notNullable()
         .onDelete('CASCADE')
+        .defaultTo(1)
       table.string('type').notNullable().unique()
       table.string('description').notNullable()
       table.string('color').notNullable()

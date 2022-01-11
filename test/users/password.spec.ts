@@ -57,7 +57,6 @@ test.group('Password', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 404)
-    assert.equal(body.message, 'User not found')
   })
 
   test('it should be able to reset the password', async (assert) => {
@@ -76,24 +75,23 @@ test.group('Password', (group) => {
     assert.isEmpty(user.tokens)
   })
 
-  test('it should return 422 when not providing data', async (assert) => {
+  test('it should return 422 when not providing data to reset the password', async (assert) => {
     const { body } = await supertest(BASE_URL).post('/reset-password').send({}).expect(422)
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 422)
   })
 
-  test('it should return 404 when providing an token that not exists', async (assert) => {
+  test('it should return 422 when providing an token that not exists', async (assert) => {
     const { body } = await supertest(BASE_URL)
       .post('/reset-password')
       .send({ token: '587', password: '145874' })
-      .expect(404)
+      .expect(422)
 
     assert.equal(body.code, 'BAD_REQUEST')
-    assert.equal(body.status, 404)
-    assert.equal(body.message, 'Invalid token')
+    assert.equal(body.status, 422)
   })
 
-  test('it should return 404 when trying to use the same token twice', async (assert) => {
+  test('it should return 422 when trying to use the same token twice', async (assert) => {
     const password = '12345678'
     const user = await UserFactory.create()
     const { token } = await user.related('tokens').create({ token: 'token' })
@@ -102,11 +100,10 @@ test.group('Password', (group) => {
     const { body } = await supertest(BASE_URL)
       .post('/reset-password')
       .send({ token, password })
-      .expect(404)
+      .expect(422)
 
     assert.equal(body.code, 'BAD_REQUEST')
-    assert.equal(body.status, 404)
-    assert.equal(body.message, 'Invalid token')
+    assert.equal(body.status, 422)
   })
 
   test('it cannot reset the password with a token who is expired after 2 hours', async (assert) => {
@@ -122,7 +119,6 @@ test.group('Password', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 410)
-    assert.equal(body.message, 'Token expired')
   })
 
   group.beforeEach(async () => {

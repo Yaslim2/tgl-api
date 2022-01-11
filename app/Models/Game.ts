@@ -19,7 +19,7 @@ export default class Game extends BaseModel {
   @column()
   public price: number
 
-  @column()
+  @column({ serializeAs: 'maxNumber' })
   public maxNumber: number
 
   @column()

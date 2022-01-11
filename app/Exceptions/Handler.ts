@@ -21,25 +21,27 @@ export default class ExceptionHandler extends HttpExceptionHandler {
     } else if (['E_INVALID_AUTH_UID', 'E_INVALID_AUTH_PASSWORD'].includes(error.code || '')) {
       return ctx.response.status(error.status).send({
         code: this.code,
-        message: string.sentenceCase('invalid credentials'),
+        message: string.sentenceCase('invalid credentials. check your credentials and try again.'),
         status: error.status,
       })
     } else if (error.code === 'E_UNAUTHORIZED_ACCESS') {
       return ctx.response.status(error.status).send({
         code: this.code,
-        message: string.sentenceCase('unauthorized access'),
+        message: string.sentenceCase(
+          'unauthorized access. you are not allowed to access this resource'
+        ),
         status: error.status,
       })
     } else if (error.code === 'E_ROUTE_NOT_FOUND') {
       return ctx.response.status(error.status).send({
         code: this.code,
-        message: string.sentenceCase('route not found'),
+        message: string.sentenceCase('the route that you tried to access was not found'),
         status: error.status,
       })
     } else if (error.code === 'E_ROW_NOT_FOUND') {
       return ctx.response.status(error.status).send({
         code: this.code,
-        message: string.sentenceCase('resource not found'),
+        message: string.sentenceCase('the resource that you tried to access was not found'),
         status: error.status,
       })
     }

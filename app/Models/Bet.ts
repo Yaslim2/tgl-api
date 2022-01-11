@@ -7,13 +7,13 @@ export default class Bet extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @column()
+  @column({ serializeAs: 'userId' })
   public userId: number
 
-  @column()
+  @column({ serializeAs: 'gameId' })
   public gameId: number
 
-  @column()
+  @column({ serializeAs: 'chosenNumbers' })
   public chosenNumbers: string
 
   @column()

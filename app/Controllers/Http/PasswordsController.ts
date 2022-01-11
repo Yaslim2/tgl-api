@@ -44,10 +44,14 @@ export default class PasswordsController {
       .preload('tokens')
       .first()
 
-    if (!userByToken) throw new BadRequest('invalid token', 404)
+    if (!userByToken) throw new BadRequest('the token that you tried to use are invalid.', 422)
 
     const tokenAge = Math.abs(userByToken.tokens[0].createdAt.diffNow('hours').hours)
-    if (tokenAge > 2) throw new BadRequest('token expired', 410)
+    if (tokenAge > 2)
+      throw new BadRequest(
+        'the token that you tried to use already expired. try again with a new one',
+        410
+      )
 
     userByToken.password = password
     await userByToken.tokens[0].delete()
@@ -56,7 +60,8 @@ export default class PasswordsController {
   }
   private async findUserByEmail(email: string) {
     const user = await User.findBy('email', email)
-    if (!user) throw new BadRequest('user not found', 404)
+    if (!user)
+      throw new BadRequest('user not found. please insert a valid email and try again.', 404)
     return user
   }
 }

@@ -63,7 +63,8 @@ export default class UsersController {
 
   private async findUser(id: number) {
     const user = await User.find(id)
-    if (!user) throw new BadRequest('user not found', 404)
+    if (!user)
+      throw new BadRequest('user not found. please insert a valid user id and try again.', 404)
     return user
   }
 
@@ -73,10 +74,13 @@ export default class UsersController {
       (usernameAlreadyExists && id === -1) ||
       (usernameAlreadyExists && usernameAlreadyExists.id !== id)
     )
-      throw new BadRequest('username already in use', 409)
+      throw new BadRequest(
+        'username already in use in the system. try again with another username',
+        409
+      )
 
     const emailAlreadyExists = await User.findBy('email', userPayload.email)
     if ((emailAlreadyExists && id === -1) || (emailAlreadyExists && emailAlreadyExists.id !== id))
-      throw new BadRequest('email already in use', 409)
+      throw new BadRequest('email already in use in the system. try again with another email', 409)
   }
 }

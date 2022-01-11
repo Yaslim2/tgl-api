@@ -12,7 +12,6 @@ export default class GameSeeder extends BaseSeeder {
         price: 2.5,
         maxNumber: 15,
         color: '#7F3992',
-        cartId: 1,
       },
       {
         type: 'Mega-Sena',
@@ -22,7 +21,6 @@ export default class GameSeeder extends BaseSeeder {
         price: 4.5,
         maxNumber: 6,
         color: '#01AC66',
-        cartId: 1,
       },
       {
         type: 'Quina',
@@ -32,7 +30,6 @@ export default class GameSeeder extends BaseSeeder {
         price: 2,
         maxNumber: 5,
         color: '#F79C31',
-        cartId: 1,
       },
     ])
   }

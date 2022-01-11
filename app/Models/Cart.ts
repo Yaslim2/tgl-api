@@ -6,7 +6,7 @@ export default class Cart extends BaseModel {
   @column({ isPrimary: true, serializeAs: null })
   public id: number
 
-  @column()
+  @column({ serializeAs: 'minValue' })
   public minValue: number
 
   @hasMany(() => Game, {

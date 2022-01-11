@@ -71,7 +71,6 @@ test.group('User', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 409)
-    assert.equal(body.message, 'Email already in use')
   })
 
   test('it should return 409 when trying to create an user with an existing username', async (assert) => {
@@ -88,7 +87,6 @@ test.group('User', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 409)
-    assert.equal(body.message, 'Username already in use')
   })
 
   test('it should update an user', async (assert) => {
@@ -228,7 +226,6 @@ test.group('User', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 404)
-    assert.equal(body.message, 'User not found')
   })*/
 
   test('it should get an user', async (assert) => {
@@ -243,8 +240,7 @@ test.group('User', (group) => {
 
   test('it should delete an user', async (assert) => {
     await supertest(BASE_URL).delete(`/users`).set('Authorization', `Bearer ${token}`).expect(204)
-
-    const users = await Database.query().select('*').from('users')
+    const users = await User.query()
     assert.isEmpty(users, 'Users not empty')
   })
 
@@ -294,6 +290,7 @@ test.group('User', (group) => {
   })
 
   group.after(async () => {
+    await supertest(BASE_URL).delete('/users').set('Authorization', `Bearer ${token}`)
     await supertest(BASE_URL).delete('/sessions').set('Authorization', `Bearer ${token}`)
   })
 
