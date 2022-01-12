@@ -35,4 +35,11 @@ Route.group(() => {
   .middleware('auth')
   .middleware('adminVerifier')
 
+Route.group(() => {
+  Route.post('/new-bet', 'BetsController.store')
+  Route.get('/:id', 'BetsController.index')
+})
+  .prefix('/bets')
+  .middleware('auth')
+
 // Route.get('/users', 'UsersController.indexAll').middleware('auth')

@@ -6,6 +6,7 @@
  */
 
 import Bouncer from '@ioc:Adonis/Addons/Bouncer'
+import User from 'App/Models/User'
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +30,9 @@ import Bouncer from '@ioc:Adonis/Addons/Bouncer'
 | NOTE: Always export the "actions" const from this file
 |****************************************************************
 */
-export const { actions } = Bouncer
+export const { actions } = Bouncer.define('getBet', (user: User, loggedUser: User) => {
+  return user.id === loggedUser.id
+})
 
 /*
 |--------------------------------------------------------------------------

@@ -43,15 +43,10 @@ export default class UsersController {
   public async index({ response, auth }: HttpContextContract) {
     const { id } = await auth.use('api').authenticate()
     const user = await this.findUser(id)
-
+    await user.load('bets')
     return response.ok({ user })
   }
-  /*
-  public async indexAll({ response, bouncer }: HttpContextContract) {
-    const users = await User.query()
-    return response.ok({ users })
-  }
-  */
+
   public async destroy({ auth, response }: HttpContextContract) {
     const { id } = await auth.use('api').authenticate()
 

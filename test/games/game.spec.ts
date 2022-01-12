@@ -12,7 +12,7 @@ test.group('Game', (group) => {
   test('it should get all games avaiables on the cart (default 1)', async (assert) => {
     const { body } = await supertest(BASE_URL).get(`/carts/${cartId}`).expect(200)
     assert.exists(body.rules, 'Games undefined')
-    assert.equal(body.rules.minValue, 30)
+    assert.equal(body.rules.minValue, 10)
     assert.equal(body.rules.types.length, 3)
   })
 

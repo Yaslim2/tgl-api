@@ -23,7 +23,7 @@ export default class Bets extends BaseSchema {
         .notNullable()
         .onDelete('CASCADE')
 
-      table.text('choosen_numbers').notNullable()
+      table.text('chosen_numbers').notNullable()
       table.float('price').unsigned().notNullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
