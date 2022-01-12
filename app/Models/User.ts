@@ -14,7 +14,7 @@ export default class User extends BaseModel {
   @column()
   public email: string
 
-  @column()
+  @column({ serializeAs: 'isAdmin' })
   public isAdmin: boolean
 
   @hasMany(() => LinkToken, { foreignKey: 'userId' })
@@ -22,6 +22,7 @@ export default class User extends BaseModel {
 
   @hasMany(() => Bet, {
     foreignKey: 'userId',
+    serializeAs: null,
   })
   public bets: HasMany<typeof Bet>
 

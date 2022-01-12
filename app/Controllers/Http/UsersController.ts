@@ -1,6 +1,8 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { HasMany } from '@ioc:Adonis/Lucid/Orm'
 import BadRequest from 'App/Exceptions/BadRequestException'
 import User from 'App/Models/User'
+import Bet from 'App/Models/Bet'
 import CreateUser from 'App/Validators/CreateUserValidator'
 import UpdateUser from 'App/Validators/UpdateUserValidator'
 
@@ -44,7 +46,8 @@ export default class UsersController {
     const { id } = await auth.use('api').authenticate()
     const user = await this.findUser(id)
     await user.load('bets')
-    return response.ok({ user })
+    const betsFiltered = await this.getFilteredBets(user.bets)
+    return response.ok({ user, bets: betsFiltered })
   }
 
   public async destroy({ auth, response }: HttpContextContract) {
@@ -77,5 +80,13 @@ export default class UsersController {
     const emailAlreadyExists = await User.findBy('email', userPayload.email)
     if ((emailAlreadyExists && id === -1) || (emailAlreadyExists && emailAlreadyExists.id !== id))
       throw new BadRequest('email already in use in the system. try again with another email', 409)
+  }
+
+  private async getFilteredBets(bets: HasMany<typeof Bet>) {
+    const betsFiltered = bets.filter((bet) => {
+      const betAge = Math.abs(bet.createdAt.diffNow('days').days)
+      return betAge < 30
+    })
+    return betsFiltered
   }
 }

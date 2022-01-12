@@ -27,7 +27,7 @@ export default class CreateBetValidator {
     games: schema.array().members(
       schema.object().members({
         chosenNumbers: schema.array().members(schema.number([rules.unsigned()])),
-        gameId: schema.number(),
+        gameId: schema.number([rules.unsigned()]),
       })
     ),
     cartId: schema.number.optional([rules.unsigned()]),

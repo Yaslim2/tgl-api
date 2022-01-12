@@ -42,4 +42,13 @@ Route.group(() => {
   .prefix('/bets')
   .middleware('auth')
 
-// Route.get('/users', 'UsersController.indexAll').middleware('auth')
+Route.group(() => {
+  Route.get('/users', 'AdminsController.indexAll')
+  Route.get('/users/:id', 'AdminsController.index')
+  Route.delete('/users/:id', 'AdminsController.destroy')
+  Route.put('/users/:id/promote', 'AdminsController.promoteUser')
+  Route.put('/users/:id/downgrade', 'AdminsController.downgradeUser')
+})
+  .prefix('/admin')
+  .middleware('auth')
+  .middleware('adminVerifier')

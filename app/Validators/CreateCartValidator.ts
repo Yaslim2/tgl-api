@@ -1,4 +1,4 @@
-import { schema } from '@ioc:Adonis/Core/Validator'
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class CreateCartValidator {
@@ -24,7 +24,7 @@ export default class CreateCartValidator {
    *    ```
    */
   public schema = schema.create({
-    minValue: schema.number(),
+    minValue: schema.number([rules.unsigned()]),
   })
 
   /**

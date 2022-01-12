@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import BadRequest from 'App/Exceptions/BadRequestException'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Game from 'App/Models/Game'
@@ -10,6 +11,7 @@ type IBets = {
   gameId: number
   price: number
   userId: number
+  createdAt?: DateTime
 }
 
 export default class BetsController {
@@ -24,6 +26,12 @@ export default class BetsController {
     const prices = games.map(async ({ chosenNumbers, gameId }) => {
       chosenNumbers.sort((a: number, b: number) => a - b)
       const game = await this.findGame(gameId)
+      if (game.cartId !== cartId)
+        throw new BadRequest(
+          'the game that you are trying to make a bet are not avaiable in this cart',
+          409
+        )
+
       if (game.maxNumber !== chosenNumbers.length)
         throw new BadRequest(
           `for make a bet to ${game.type} you need to provide exactly ${game.maxNumber} numbers.`,
@@ -37,12 +45,14 @@ export default class BetsController {
             409
           )
       })
+
       betsToMake.push({
         chosenNumbers: chosenNumbers.join(', '),
         gameId,
         price: game.price,
         userId: id,
       })
+
       return game.price
     })
 
@@ -64,7 +74,7 @@ export default class BetsController {
   public async index({ request, response, auth, bouncer }: HttpContextContract) {
     const id = request.param('id')
     const user = await auth.use('api').authenticate()
-    await bouncer.authorize('getBet', user)
+    if (!user.isAdmin) await bouncer.authorize('getBet', user)
     const bet = await this.findBet(id)
     return response.ok({ bet })
   }
