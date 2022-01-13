@@ -32,7 +32,8 @@
       "@adonisjs/mail",
       "@adonisjs/view",
       "@adonisjs/auth",
-      "@adonisjs/bouncer"
+      "@adonisjs/bouncer",
+      "adonis5-scheduler"
     ]
   }
 }

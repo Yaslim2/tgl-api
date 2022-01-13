@@ -26,6 +26,12 @@ async function rollbackMigrations() {
     stdio: 'inherit',
   })
 }
+/*
+async function runScheduler() {
+  await execa.node('ace', ['scheduler:run'], {
+    stdio: 'inherit',
+  })
+}*/
 
 async function startHttpServer() {
   const { Ignitor } = await import('@adonisjs/core/build/src/Ignitor')

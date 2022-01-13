@@ -100,7 +100,7 @@ export default class UsersController {
   private async getFilteredBets(bets: HasMany<typeof Bet>) {
     const betsFiltered = bets.filter((bet) => {
       const betAge = Math.abs(bet.createdAt.diffNow('days').days)
-      return betAge < 30
+      return betAge <= 30
     })
     return betsFiltered
   }

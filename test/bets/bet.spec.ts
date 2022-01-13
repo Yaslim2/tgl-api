@@ -165,13 +165,15 @@ test.group('Bets', (group) => {
 
     Mail.trap(() => {})
 
-    await supertest(BASE_URL)
+    const response = await supertest(BASE_URL)
       .post('/bets/new-bet')
       .set('Authorization', `Bearer ${token}`)
       .send({ games })
 
+    const betId = response.body.bets[0].id
+
     const { body } = await supertest(BASE_URL)
-      .get('/bets/1')
+      .get(`/bets/${betId}`)
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
 
