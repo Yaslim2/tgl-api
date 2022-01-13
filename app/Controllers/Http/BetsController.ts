@@ -1,10 +1,12 @@
 import { DateTime } from 'luxon'
+import { string } from '@ioc:Adonis/Core/Helpers'
 import BadRequest from 'App/Exceptions/BadRequestException'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Game from 'App/Models/Game'
 import CreateBet from 'App/Validators/CreateBetValidator'
 import Bet from 'App/Models/Bet'
 import Cart from 'App/Models/Cart'
+import Mail from '@ioc:Adonis/Addons/Mail'
 
 type IBets = {
   chosenNumbers: string
@@ -16,7 +18,7 @@ type IBets = {
 
 export default class BetsController {
   public async store({ request, response, auth }: HttpContextContract) {
-    const { id } = await auth.use('api').authenticate()
+    const { id, email, username } = await auth.use('api').authenticate()
     let { games, cartId } = await request.validate(CreateBet)
 
     if (!cartId) cartId = 1
@@ -69,6 +71,16 @@ export default class BetsController {
       )
 
     const bets = await Bet.createMany(betsToMake)
+    await Mail.send((message) => {
+      message
+        .from('no-reply@tgl.com')
+        .to(email)
+        .subject(`TGL - Your bets have been made!`)
+        .htmlView('bet/newbet', {
+          name: string.sentenceCase(username),
+          companyEmail: 'yaslim@luby.com',
+        })
+    })
     return response.created({ bets })
   }
   public async index({ request, response, auth, bouncer }: HttpContextContract) {

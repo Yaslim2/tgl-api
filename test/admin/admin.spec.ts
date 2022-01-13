@@ -1,6 +1,6 @@
 import { UserFactory } from 'Database/factories'
 import Database from '@ioc:Adonis/Lucid/Database'
-
+import Mail from '@ioc:Adonis/Addons/Mail'
 import test from 'japa'
 import supertest from 'supertest'
 import User from 'App/Models/User'
@@ -26,6 +26,7 @@ test.group('Admin', (group) => {
         chosenNumbers: [1, 2, 3, 4, 5, 6],
       },
     ]
+    Mail.trap(() => {})
 
     await supertest(BASE_URL)
       .post('/bets/new-bet')
@@ -44,6 +45,7 @@ test.group('Admin', (group) => {
     assert.equal(body.user.username, user.username)
     assert.equal(body.user.email, user.email)
     assert.equal(body.bets.length, 3)
+    Mail.restore()
   })
 
   test('it should return 404 when providing an invalid user id for get a user', async (assert) => {

@@ -1,3 +1,6 @@
+import User from 'App/Models/User'
+import Mail from '@ioc:Adonis/Addons/Mail'
+import { string } from '@ioc:Adonis/Core/Helpers'
 import { UserFactory } from 'Database/factories'
 import Database from '@ioc:Adonis/Lucid/Database'
 
@@ -7,6 +10,7 @@ import supertest from 'supertest'
 const BASE_URL = `http://${process.env.HOST}:${process.env.PORT}`
 
 let token: string
+let user = {} as User
 
 test.group('Bets', (group) => {
   test('it should do a bet', async (assert) => {
@@ -25,6 +29,13 @@ test.group('Bets', (group) => {
       },
     ]
 
+    Mail.trap((message) => {
+      assert.deepEqual(message.to, [{ address: user.email }])
+      assert.deepEqual(message.from, { address: 'no-reply@tgl.com' })
+      assert.include(message.html!, string.sentenceCase(user.username))
+      assert.equal(message.subject, 'TGL - Your bets have been made!')
+    })
+
     const { body } = await supertest(BASE_URL)
       .post('/bets/new-bet')
       .set('Authorization', `Bearer ${token}`)
@@ -33,6 +44,7 @@ test.group('Bets', (group) => {
 
     assert.exists(body.bets, 'Bets undefined')
     assert.equal(body.bets.length, 3)
+    Mail.restore()
   })
 
   test('it should return 409 when providing less than the min cart value', async (assert) => {
@@ -151,6 +163,8 @@ test.group('Bets', (group) => {
       },
     ]
 
+    Mail.trap(() => {})
+
     await supertest(BASE_URL)
       .post('/bets/new-bet')
       .set('Authorization', `Bearer ${token}`)
@@ -164,6 +178,7 @@ test.group('Bets', (group) => {
     assert.exists(body.bet, 'Bet undefined')
     assert.equal(body.bet.id, 1)
     assert.equal(body.bet.chosenNumbers, games[0].chosenNumbers.join(', '))
+    Mail.restore()
   })
 
   test('it should return 404 when providing an invalid id for get a bet', async (assert) => {
@@ -184,6 +199,7 @@ test.group('Bets', (group) => {
       .post('/sessions')
       .send({ email: newUser.email, password })
 
+    user = newUser
     token = body.token.token
   })
 
