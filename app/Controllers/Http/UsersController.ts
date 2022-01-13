@@ -1,10 +1,12 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { HasMany } from '@ioc:Adonis/Lucid/Orm'
+import { string } from '@ioc:Adonis/Core/Helpers'
 import BadRequest from 'App/Exceptions/BadRequestException'
 import User from 'App/Models/User'
 import Bet from 'App/Models/Bet'
 import CreateUser from 'App/Validators/CreateUserValidator'
 import UpdateUser from 'App/Validators/UpdateUserValidator'
+import Mail from '@ioc:Adonis/Addons/Mail'
 
 type IUserPayloadType = {
   username: string
@@ -22,6 +24,19 @@ export default class UsersController {
     if (userPayload.email.includes('@luby')) isAdmin = true
 
     const user = await User.create({ ...userPayload, isAdmin })
+
+    await Mail.send((message) => {
+      message
+        .from('no-reply@tgl.com')
+        .to(user.email)
+        .subject(`TGL - Welcome ${string.sentenceCase(user.username)}`)
+        .htmlView('welcome/welcome', {
+          name: string.sentenceCase(user.username),
+          company: 'TGL',
+          companyEmail: 'no-reply@tgl.com',
+          companyAddress: '208, 699 Street',
+        })
+    })
 
     return response.created({ user })
   }

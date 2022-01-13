@@ -3,6 +3,8 @@ import { UserFactory } from 'Database/factories'
 import Database from '@ioc:Adonis/Lucid/Database'
 import test from 'japa'
 import supertest from 'supertest'
+import { string } from '@ioc:Adonis/Core/Helpers'
+import Mail from '@ioc:Adonis/Addons/Mail'
 
 const BASE_URL = `http://${process.env.HOST}:${process.env.PORT}`
 let user = {} as User
@@ -15,12 +17,24 @@ test.group('User', (group) => {
       email: 'yaslim@yaslim.com',
       password: '1234',
     }
+
+    Mail.trap((message) => {
+      assert.deepEqual(message.to, [{ address: userPayload.email }])
+      assert.deepEqual(message.from, { address: 'no-reply@tgl.com' })
+      assert.include(message.html!, string.sentenceCase(userPayload.username))
+      assert.equal(
+        message.subject,
+        `TGL - Welcome ${string.sentenceCase(string.sentenceCase(userPayload.username))}`
+      )
+    })
+
     const { body } = await supertest(BASE_URL).post('/users').send(userPayload).expect(201)
 
     assert.exists(body.user, 'User undefined')
     assert.equal(body.user.username, userPayload.username)
     assert.exists(body.user.email, userPayload.email)
     assert.notExists(body.user.password, 'Password defined on the body')
+    Mail.restore()
   })
 
   test('it should return 422 when providing no data to create an user', async (assert) => {
@@ -63,6 +77,7 @@ test.group('User', (group) => {
       email: 'yaslim@yaslim.com',
       password: '1234',
     }
+    Mail.trap(() => {})
     await supertest(BASE_URL).post('/users').send(userPayload).expect(201)
     const { body } = await supertest(BASE_URL)
       .post('/users')
@@ -71,6 +86,7 @@ test.group('User', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 409)
+    Mail.restore()
   })
 
   test('it should return 409 when trying to create an user with an existing username', async (assert) => {
@@ -79,6 +95,7 @@ test.group('User', (group) => {
       email: 'yaslim@yaslim.com',
       password: '1234',
     }
+    Mail.trap(() => {})
     await supertest(BASE_URL).post('/users').send(userPayload).expect(201)
     const { body } = await supertest(BASE_URL)
       .post('/users')
@@ -87,6 +104,7 @@ test.group('User', (group) => {
 
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 409)
+    Mail.restore()
   })
 
   test('it should update an user', async (assert) => {
