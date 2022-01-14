@@ -5,7 +5,7 @@ import Mail from '@ioc:Adonis/Addons/Mail'
 
 export default class SendEmail extends BaseTask {
   public static get schedule() {
-    return '* */0 */9 * * *'
+    return '* 0 9 * * *'
   }
 
   public static get useLock() {
