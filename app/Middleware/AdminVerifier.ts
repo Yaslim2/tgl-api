@@ -5,7 +5,7 @@ export default class AdminVerifier {
     const { isAdmin } = auth.user!
     if (!isAdmin) {
       throw new BadRequest(
-        'you have no permission to perform this action. only admins can do those actions',
+        'You have no permission to perform this action. Only admins can do those actions',
         403
       )
     }

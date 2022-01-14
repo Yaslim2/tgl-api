@@ -31,7 +31,7 @@ export default class AdminsController {
     const user = await this.findUser(id)
 
     if (user.isAdmin)
-      throw new BadRequest('the user that you are trying to promote already is a admin', 409)
+      throw new BadRequest('The user that you are trying to promote already is a admin', 409)
 
     user.isAdmin = true
     return response.ok({ user })
@@ -43,7 +43,7 @@ export default class AdminsController {
 
     if (!user.isAdmin)
       throw new BadRequest(
-        'the user that you are trying to downgrade already is a normal user',
+        'The user that you are trying to downgrade already is a normal user',
         409
       )
 
@@ -54,7 +54,7 @@ export default class AdminsController {
   private async findUser(id: number) {
     const user = await User.find(id)
     if (!user)
-      throw new BadRequest('user not found. please provide a valid user id and try again.', 404)
+      throw new BadRequest('User not found. Please provide a valid user id and try again.', 404)
     return user
   }
 

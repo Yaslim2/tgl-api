@@ -27,7 +27,7 @@ export default class CartsController {
     await cart.load('types')
     const existingGame = cart.types.find((cartGame) => cartGame.id === game.id)
     if (existingGame)
-      throw new BadRequest('the game you tried to add already exists in the cart.', 409)
+      throw new BadRequest('The game you tried to add already exists in the cart.', 409)
 
     game.cartId = cartId
 
@@ -70,14 +70,14 @@ export default class CartsController {
   private async findCart(id: number) {
     const cart = await Cart.find(id)
     if (!cart)
-      throw new BadRequest('cart not found. please insert a valid cart id and try again', 404)
+      throw new BadRequest('Cart not found. Please insert a valid cart id and try again', 404)
     return cart
   }
 
   private async findGame(id: number) {
     const game = await Game.find(id)
     if (!game)
-      throw new BadRequest('game not found. please insert a valid game id and try again', 404)
+      throw new BadRequest('Game not found. Please insert a valid game id and try again', 404)
     return game
   }
 
@@ -92,7 +92,7 @@ export default class CartsController {
       .first()
 
     if (!rules)
-      throw new BadRequest('cart not found. please insert a valid cart id and try again', 404)
+      throw new BadRequest('Cart not found. Please insert a valid cart id and try again', 404)
     return rules
   }
 

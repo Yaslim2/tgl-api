@@ -77,7 +77,7 @@ export default class UsersController {
   private async findUser(id: number) {
     const user = await User.find(id)
     if (!user)
-      throw new BadRequest('user not found. please insert a valid user id and try again.', 404)
+      throw new BadRequest('User not found. Please insert a valid user id and try again.', 404)
     return user
   }
 
@@ -88,13 +88,13 @@ export default class UsersController {
       (usernameAlreadyExists && usernameAlreadyExists.id !== id)
     )
       throw new BadRequest(
-        'username already in use in the system. try again with another username',
+        'Username already in use in the system. Try again with another username',
         409
       )
 
     const emailAlreadyExists = await User.findBy('email', userPayload.email)
     if ((emailAlreadyExists && id === -1) || (emailAlreadyExists && emailAlreadyExists.id !== id))
-      throw new BadRequest('email already in use in the system. try again with another email', 409)
+      throw new BadRequest('Email already in use in the system. Try again with another email', 409)
   }
 
   private async getFilteredBets(bets: HasMany<typeof Bet>) {

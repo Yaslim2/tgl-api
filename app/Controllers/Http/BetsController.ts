@@ -30,20 +30,20 @@ export default class BetsController {
       const game = await this.findGame(gameId)
       if (game.cartId !== cartId)
         throw new BadRequest(
-          'the game that you are trying to make a bet are not avaiable in this cart',
+          'The game that you are trying to make a bet are not avaiable in this cart',
           409
         )
 
       if (game.maxNumber !== chosenNumbers.length)
         throw new BadRequest(
-          `for make a bet to ${game.type} you need to provide exactly ${game.maxNumber} numbers.`,
+          `For make a bet to ${game.type} you need to provide exactly ${game.maxNumber} numbers.`,
           409
         )
 
       chosenNumbers.forEach((number) => {
         if (number > game.range || number === 0)
           throw new BadRequest(
-            `invalid numbers to the bet. please provide numbers between 1 and ${game.range}.`,
+            `invalid numbers to the bet. Please provide numbers between 1 and ${game.range}.`,
             409
           )
       })
@@ -63,7 +63,7 @@ export default class BetsController {
     const totalPrice = allPrices.reduce((ac, val) => ac + val)
     if (totalPrice < cart.minValue)
       throw new BadRequest(
-        `you need to provide at least ${totalPrice.toLocaleString('pt-br', {
+        `You need to provide at least ${totalPrice.toLocaleString('pt-br', {
           style: 'currency',
           currency: 'BRL',
         })} to make a game`,
@@ -94,21 +94,21 @@ export default class BetsController {
   private async findBet(id: number) {
     const bet = await Bet.find(id)
     if (!bet)
-      throw new BadRequest('bet not found. please provide a valid bet id and try again.', 404)
+      throw new BadRequest('Bet not found. Please provide a valid bet id and try again.', 404)
     return bet
   }
 
   private async findGame(id: number) {
     const game = await Game.find(id)
     if (!game)
-      throw new BadRequest('game not found. please provide a valid game id and try again.', 404)
+      throw new BadRequest('Game not found. Please provide a valid game id and try again.', 404)
     return game
   }
 
   private async findCart(id: number) {
     const cart = await Cart.find(id)
     if (!cart)
-      throw new BadRequest('cart not found. please provide a valid cart id and try again.', 404)
+      throw new BadRequest('Cart not found. Please provide a valid cart id and try again.', 404)
     return cart
   }
 }
