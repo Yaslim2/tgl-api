@@ -164,11 +164,7 @@ test.group('Cart', (group) => {
   })
 
   test('it should get all carts on the system', async (assert) => {
-    const { body } = await supertest(BASE_URL)
-      .get(`/admin/carts/all`)
-      .set('Authorization', `Bearer ${token}`)
-      .expect(200)
-
+    const { body } = await supertest(BASE_URL).get(`/carts`).set('Authorization', `Bearer ${token}`)
     assert.exists(body.carts, 'Carts undefined')
     assert.equal(body.carts.length, 1)
   })

@@ -30,7 +30,7 @@ export default class CreateGameValidator {
     price: schema.number([rules.unsigned()]),
     maxNumber: schema.number([rules.unsigned()]),
     color: schema.string(),
-    cartId: schema.number.optional(),
+    cartId: schema.number.optional([rules.unsigned()]),
   })
 
   /**

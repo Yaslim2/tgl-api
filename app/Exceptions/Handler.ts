@@ -14,22 +14,20 @@ export default class ExceptionHandler extends HttpExceptionHandler {
     if (error.status === 422) {
       return ctx.response.status(error.status).send({
         code: this.code,
-        message: string.sentenceCase(error.message),
+        message: error.message,
         status: error.status,
         errors: error['messages']?.errors ? error['messages'].errors : [],
       })
     } else if (['E_INVALID_AUTH_UID', 'E_INVALID_AUTH_PASSWORD'].includes(error.code || '')) {
       return ctx.response.status(error.status).send({
         code: this.code,
-        message: string.sentenceCase('invalid credentials. check your credentials and try again.'),
+        message: 'invalid credentials. check your credentials and try again.',
         status: error.status,
       })
     } else if (error.code === 'E_UNAUTHORIZED_ACCESS') {
       return ctx.response.status(error.status).send({
         code: this.code,
-        message: string.sentenceCase(
-          'unauthorized access. you are not allowed to access this resource'
-        ),
+        message: 'unauthorized access. you are not allowed to access this resource',
         status: error.status,
       })
     } else if (error.code === 'E_ROUTE_NOT_FOUND') {
