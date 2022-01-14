@@ -43,7 +43,7 @@ export default class BetsController {
       chosenNumbers.forEach((number) => {
         if (number > game.range || number === 0)
           throw new BadRequest(
-            `invalid numbers to the bet. Please provide numbers between 1 and ${game.range}.`,
+            `Invalid numbers to the bet. Please provide numbers between 1 and ${game.range}.`,
             409
           )
       })
